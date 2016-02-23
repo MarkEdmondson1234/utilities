@@ -1,3 +1,21 @@
+#' Converts RFC3339 to as.Date
+#' 
+#' @keywords internal
+RFC_convert <- function(RFC, drop_time=FALSE){
+  
+  if(drop_time){
+    d <-   as.Date(strptime(as.character(RFC), 
+                            tz="UTC", 
+                            "%Y-%m-%dT%H:%M:%OSZ"))
+  } else {
+    d <- strptime(as.character(RFC), 
+                  tz="UTC", 
+                  "%Y-%m-%dT%H:%M:%OSZ")
+  }
+  
+  return(d)
+}
+
 #' Is this a try error?
 #' 
 #' Utility to test errors
