@@ -1,4 +1,4 @@
-#' Camel case to title case
+#' Camel case to dot.case
 #'
 #' @param character vector
 #'
