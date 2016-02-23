@@ -1,3 +1,15 @@
+#' Idempotency
+#'
+#' A random code to ensure no repeats
+#'
+#' @return A random 15 digit hash
+#'
+#' @export
+idempotency <- function(){
+  paste(sample(c(LETTERS, letters, 0:9), 15, TRUE),collapse="")
+}
+
+
 #' Converts RFC3339 to as.Date
 #' 
 #' @keywords internal
