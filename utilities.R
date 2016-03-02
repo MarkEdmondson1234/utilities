@@ -1,15 +1,81 @@
+#' Change data frame factor colums to character
+#'
+#' @param dframe a data.frame with factor colums
+#'
+#' @return dframe with factor columns turned into character
+changeDFFactorsToCharacter <- function(dframe){
+  stopifnot(inherits(dframe,"data.frame"))
+
+  factors <- sapply(dframe, is.factor)
+  dframe[factors] <- lapply(dframe[factors], as.character)
+  dframe
+}
+
+
+
+
+#' Write an object to csv
+#'
+#' @param df A dataframe
+#' @param folder Where to write it
+#'
+#' Will write csv file with name folder+df_name+date+.csv
+writeFile <- function(df, folder = "./data/"){
+  df_name <- deparse(substitute(df))
+
+  file_name <- paste0(folder,df_name,"_",Sys.Date(),".csv")
+  write.csv(df, file = file_name, row.names = FALSE)
+
+}
+
+
+
+#' Perform lookup
+#'
+#' Modifies input by a named vector where names = original, values = lookup
+#'
+#' @param input character vector to modify
+#' @param lookup Named character vector
+#' @param no_match If no_match=TRUE then no matches become "Other"
+#'
+#' Modifies input in place, leaves vector not in lookup as is
+lookupNames <- function(input, lookup, no_match = FALSE){
+  stopifnot(inherits(input,"character"), inherits(lookup, "character"))
+
+  if(no_match){
+    input <- lookup[input]
+    input[is.na(input)] <- "Other"
+  } else {
+    input[input %in% names(lookup)] <- lookup[input[input %in% names(lookup)]]
+  }
+
+  output <- input
+}
+
+
 #' Customer message log level
-#' 
+#'
 #' @param ... The message(s)
 #' @param level The severity
-#' 
+#' @param debugVar If true, pass in variable names to display
+#'
 #' @details 0 = everything, 1 = debug, 2=normal, 3=important
-myMessage <- function(..., level = 2){
-  
+myMessage <- function(..., level = 1, debugVar=FALSE){
+
+
   compare_level <- getOption("googleAuthR.verbose")
-  
+  if(is.null(compare_level)) compare_level <- 1
+
+
+  if(debugVar){
+    vars <- list(...)
+    output <- lapply(vars, function(x) {paste(" ", x,":", get0(x))})
+  } else {
+    output <- ...
+  }
+
   if(level >= compare_level){
-    message(...)
+    message(Sys.time(), ...)
   }
 
 }
@@ -29,31 +95,31 @@ idempotency <- function(){
 
 
 #' Converts RFC3339 to as.Date
-#' 
+#'
 #' @keywords internal
 RFC_convert <- function(RFC, drop_time=FALSE){
-  
+
   if(drop_time){
-    d <-   as.Date(strptime(as.character(RFC), 
-                            tz="UTC", 
+    d <-   as.Date(strptime(as.character(RFC),
+                            tz="UTC",
                             "%Y-%m-%dT%H:%M:%OSZ"))
   } else {
-    d <- strptime(as.character(RFC), 
-                  tz="UTC", 
+    d <- strptime(as.character(RFC),
+                  tz="UTC",
                   "%Y-%m-%dT%H:%M:%OSZ")
   }
-  
+
   return(d)
 }
 
 #' Is this a try error?
-#' 
+#'
 #' Utility to test errors
-#' 
+#'
 #' @param test_me an object created with try()
-#' 
+#'
 #' @return Boolean
-#' 
+#'
 #' @keywords internal
 is.error <- function(test_me){
   inherits(test_me, "try-error")
