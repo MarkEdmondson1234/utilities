@@ -1,3 +1,15 @@
+#' check a Shiny select input
+#'
+#' Covers multiple and single select
+checkSelectInput <- function(input_select){
+  if(all(!is.null(input_select), input_select != "")){
+    TRUE
+  } else {
+    FALSE
+  }
+}
+
+
 #' Change data frame factor colums to character
 #'
 #' @param dframe a data.frame with factor colums
