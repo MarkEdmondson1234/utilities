@@ -69,27 +69,18 @@ lookupNames <- function(input, lookup, no_match = FALSE){
 #'
 #' @param ... The message(s)
 #' @param level The severity
-#' @param debugVar If true, pass in variable names to display
 #'
 #' @details 0 = everything, 1 = debug, 2=normal, 3=important
-myMessage <- function(..., level = 1, debugVar=FALSE){
-
-
+myMessage <- function(..., level = 1){
+  
+  
   compare_level <- getOption("googleAuthR.verbose")
   if(is.null(compare_level)) compare_level <- 1
-
-
-  if(debugVar){
-    vars <- list(...)
-    output <- lapply(vars, function(x) {paste(" ", x,":", get0(x))})
-  } else {
-    output <- ...
-  }
-
+  
   if(level >= compare_level){
-    message(Sys.time(), ...)
+    message(Sys.time()," -- ", ...)
   }
-
+  
 }
 
 
