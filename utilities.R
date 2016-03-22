@@ -1,3 +1,18 @@
+#' Gets the names of a dataframe's columns of a certain class
+#' 
+#' @param df dataframe
+#' @param class Col type to return e.g. "character"
+#' 
+getColNameOfClass <- function(df, class_name){
+  stopifnot(inherits(df, "data.frame"),
+            inherits(class_name, "character"))
+  
+  names(df)[vapply(df, class, "string") == class_name]
+}
+
+
+
+
 #' check a Shiny select input
 #'
 #' Covers multiple and single select
