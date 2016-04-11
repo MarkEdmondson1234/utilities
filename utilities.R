@@ -1,17 +1,21 @@
+#' str all the things in environment
+#'
+#'
+strAll <- function(){
+  lapply(ls(), function(x) str(get(x)) )
+}
+
 #' Gets the names of a dataframe's columns of a certain class
-#' 
+#'
 #' @param df dataframe
 #' @param class Col type to return e.g. "character"
-#' 
+#'
 getColNameOfClass <- function(df, class_name){
   stopifnot(inherits(df, "data.frame"),
             inherits(class_name, "character"))
-  
+
   names(df)[vapply(df, class, "string") == class_name]
 }
-
-
-
 
 #' check a Shiny select input
 #'
@@ -87,15 +91,15 @@ lookupNames <- function(input, lookup, no_match = FALSE){
 #'
 #' @details 0 = everything, 1 = debug, 2=normal, 3=important
 myMessage <- function(..., level = 1){
-  
-  
+
+
   compare_level <- getOption("googleAuthR.verbose")
   if(is.null(compare_level)) compare_level <- 1
-  
+
   if(level >= compare_level){
     message(Sys.time()," -- ", ...)
   }
-  
+
 }
 
 
