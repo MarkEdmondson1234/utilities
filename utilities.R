@@ -42,6 +42,24 @@ strAll <- function(){
   lapply(ls(), function(x) str(get(x)) )
 }
 
+#' Start of the month
+#' @param x A date
+som <- function(x) {
+  as.Date(format(x, "%Y-%m-01"))
+}
+
+#' End of the month
+#' @param x A date
+eom <- function(x) {
+  som(som(x) + 35) - 1
+}
+
+#' Start and end of last month
+get_start_end_month <- function(x = Sys.Date()){
+  c(som(som(x) - 1), som(x) - 1)
+}
+
+
 #' Gets the names of a dataframe's columns of a certain class
 #'
 #' @param df dataframe
@@ -136,7 +154,11 @@ myMessage <- function(..., level = 1){
   if(level >= compare_level){
     message(Sys.time()," -- ", ...)
   }
-
+  
+  if(level == 0){
+    cat(file = stderr(), ...)
+  }
+  
 }
 
 
