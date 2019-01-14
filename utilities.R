@@ -1,3 +1,83 @@
+#' base R safe rbind
+#' 
+#' Send in a list of data.fames with different column names
+#' 
+#' @return one data.frame
+#' a safe rbind for variable length columns
+my_reduce_rbind <- function(x){
+  classes <- lapply(x, inherits, what = "data.frame")
+  stopifnot(all(unlist(classes)))
+  
+  # all possible names
+  df_names <- Reduce(union, lapply(x, names))
+  
+  df_same_names <- lapply(x, function(y){
+    missing_names <- setdiff(df_names,names(y))
+    num_col <- length(missing_names)
+    if(num_col > 0){
+      missing_cols <- vapply(missing_names, function(i) NA, NA, USE.NAMES = TRUE)
+      
+      new_df <- data.frame(matrix(missing_cols, ncol = num_col))
+      names(new_df) <- names(missing_cols)
+      y <- cbind(y, new_df)
+    }
+    
+    y
+  })
+  
+  Reduce(rbind, df_same_names)
+}
+
+#' Get data from cache or the function
+#' 
+#' @param cache_file File location of RDS
+#' @param f A function to do if no cache
+#' 
+#' @return The object
+fetch_or_cache <- function(cache_file, f){
+  if(!file.exists(cache_file)){
+    out <- f
+    saveRDS(out, file = cache_file)
+  } else {
+    out <- readRDS(cache_file)
+  }
+  
+  out
+}
+
+#' Make a list of date ranges
+#' 
+#' @param start A start Date
+#' @param end An end date
+#' @param by increment of sequence, see \link{seq.Date}
+#' 
+#' @return A list of start and end dates
+make_date_ranges <- function(start, end, by = "month"){
+  starts <- seq(start, end, by = by)
+  ends <- c((starts - 1)[-1], end)
+  
+  as.list(paste(starts, ends))
+  
+}
+
+is.gcs <- function(x){
+  out <- grepl("^gs://", x)
+  if(out){
+    myMessage("Using Google Storage URI: ", x, level = 3)
+  }
+  out
+}
+
+
+#' Is length 1
+#'
+#' @param x Test me
+#'
+#' @result TRUE is length == 1, FALSE if not
+is.unit <- function(x){
+  length(x) == 1
+}
+
 #' Safe subset
 #'
 #' @param df Dataframe
@@ -154,11 +234,11 @@ myMessage <- function(..., level = 1){
   if(level >= compare_level){
     message(Sys.time()," -- ", ...)
   }
-  
+
   if(level == 0){
     cat(file = stderr(), ...)
   }
-  
+
 }
 
 
