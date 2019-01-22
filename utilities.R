@@ -122,7 +122,6 @@ is.gcs <- function(x){
 is.unit <- function(x){
   length(x) == 1
 }
->>>>>>> d7d27c0c9b6125764621af7d9a1cbdbc8d9b74ff
 
 #' Safe subset
 #'
