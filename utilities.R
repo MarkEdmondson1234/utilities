@@ -1,3 +1,48 @@
+#' Database export to data.frames
+#' 
+#' Takes one file of database exports and splits it into data.frames
+#' 
+#' @param filepath file to export (can be zipped)
+#' @param split_text How the tables are split in the text file
+#' 
+split_table_export <- function(filepath, split_text = "^Table"){
+  all <- readLines(filepath)
+  splits <- which(grepl(pattern = split_text, all))
+  
+  get_table_rows <- function(splits){
+    n <- seq_along(splits)
+    o <- lapply(n, function(i){
+      message("Splitting at:", all[splits[i]])
+      
+      start <- splits[i]+1
+      end   <- splits[i+1]-1
+      end <- if(is.na(end)) length(all) else end
+      
+      c(start,end)
+    })
+    
+    setNames(o, all[splits])
+    
+  }
+  
+  table_rows <- get_table_rows(splits)
+  
+  tables <- lapply(table_rows, function(x){
+    start <- x[[1]]
+    end   <- x[[2]]
+    
+    read.csv(text = all[start:end], stringsAsFactors = FALSE)
+  })
+  names(tables) <- names(table_rows)
+  
+  str(tables, max.level=1)
+  
+  tables
+}
+
+
+
+
 #' Safe subset
 #'
 #' @param df Dataframe
